@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name" translatable="false">Tests Assistant</string>
+    <string name="title_activity_test_page" translatable="false">TestPage</string>
+    <string name="Check_Answer">Check</string>
+    <string name="Next_Question" translatable="false">></string>
+    <string name="Load_Test">Load tests</string>
+    <string name="All_Tests">Complete all tests</string>
+    <string name="complete_the_selected_number_of_tests">Complete the selected number of tests</string>
+    <string name="welcome_text">This is \"Tests Assistant\" app - app, that worked with .qst file format from program Assistant</string>
+    <string name="end_testing">Finish the test</string>
+    <string name="test_result">Test results -\n%1$d right answers out of %2$d</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Check_Answer">Перевірити</string>
+    <string name="Load_Test">Загрузити тести</string>
+    <string name="All_Tests">Пройти усі тести</string>
+    <string name="complete_the_selected_number_of_tests">Пройти вибрану кількість тестів</string>
+    <string name="welcome_text">Цей додаток \"Test Assistant\" - додаток для роботи з файлами .qst, зробленими в програмі \"Ассистент\"</string>
+    <string name="end_testing">Закінчити тест</string>
+    <string name="test_result">Результати тестування -\n%1$d правильних відповідей з %2$d</string>
+</resources>
