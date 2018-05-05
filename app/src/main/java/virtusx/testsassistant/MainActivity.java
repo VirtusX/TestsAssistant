@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void LoadTest(View view) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("*/*");
         startActivityForResult(intent,READ_REQUEST_CODE);
     }
@@ -70,17 +71,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String file = null;
+            List<String> files = new ArrayList<>();
             if (data != null) {
                 try {
-                    file = readTextFromUri(data.getData());
+                    if(data.getData()!= null){
+                        file = readTextFromUri(data.getData());
+                    }
+                    else if(data.getClipData()!= null) {
+                        for (int i = 0; i<data.getClipData().getItemCount();i++){
+                            files.add(readTextFromUri(data.getClipData().getItemAt(i).getUri()));
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(file!= null)
+            if(file!= null || files.size()>0)
             {
                 try{
-                    quiz = new QuizFile(file);
+                    quiz = file!= null ? new QuizFile(file) : new QuizFile(files);
                     Intent testPage = new Intent(this,TestPage.class);
                     testPage.putExtra("QuizFile",quiz);
                     startActivity(testPage);
