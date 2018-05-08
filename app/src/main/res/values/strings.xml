@@ -9,4 +9,10 @@
     <string name="welcome_text">This is \"Tests Assistant\" app - app, that worked with .qst file format from program Assistant</string>
     <string name="end_testing">Finish the test</string>
     <string name="test_result">Test results -\n%1$d right answers out of %2$d</string>
+    <string name="question_result">%1$d right answers out of %2$d</string>
+    <string name="settings">Settings</string>
+    <string name="pref_header_general">General</string>
+    <string name="blind_mode">Blind Mode</string>
+    <string name="blind_description">Doesn\'t show corrent answers</string>
+    <string name="order_of_question">Random order of questions</string>
 </resources>

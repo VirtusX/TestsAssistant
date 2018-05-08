@@ -1,8 +1,11 @@
 package virtusx.testsassistant;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
@@ -10,9 +13,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 public class MainTestPage extends AppCompatActivity  {
 
@@ -20,9 +23,10 @@ public class MainTestPage extends AppCompatActivity  {
     private ListView list;
     private Integer currentQuestion;
     private List<QuizFile.Question> questions = new ArrayList<>();
-    private Integer falseAnswer = 0;
     private ColorStateList ra;
     private ColorStateList fa;
+    SharedPreferences prefs;
+    private Boolean hideAnswers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -31,22 +35,23 @@ public class MainTestPage extends AppCompatActivity  {
             ra  =  ColorStateList.valueOf(getResources().getColor(R.color.colorRight));
             fa  =  ColorStateList.valueOf(getResources().getColor(R.color.colorError));
             quiz = (QuizFile) Objects.requireNonNull(getIntent().getExtras()).get("QuizFile");
+            prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            hideAnswers = prefs.getBoolean("blind_mode",false);
             Object num = getIntent().getExtras().get("QuestionNumber");
             if (quiz != null) {
-                if(num!= null){
-                    Random randomGenerator = new Random();
-                    List<QuizFile.Question> qsts = quiz.getQuestions();
-                    for(int i = 0; i<Integer.parseInt(num.toString());i++){
-                        int index = randomGenerator.nextInt(qsts.size());
-                        questions.add(qsts.get(index));
-                        qsts.remove(index);
-                    }
-                }else questions = quiz.getQuestions();
+                List<QuizFile.Question> qsts = new ArrayList<>(quiz.getQuestions());
+                if(num!= null && isNumeric(num.toString()) && Integer.parseInt(num.toString()) <quiz.getQuestions().size())
+                    questions = RandomList(qsts).subList(0, Integer.parseInt(num.toString()));
+                else if(prefs.getBoolean("random_order",false))
+                    questions = RandomList(qsts);
+                else  questions = qsts;
                 currentQuestion = 0;
                 QuizFile.Question qst = questions.get(currentQuestion);
                 ((TextView)findViewById(R.id.Question)).setText((currentQuestion+1)+"/"+questions.size()+" "+qst.getQuestionName());
                 list = findViewById(R.id.Answers);
-                AnswerAdapter answerArrayAdapter = new AnswerAdapter(this,R.layout.answer_item,qst.getAnswers(), ra, fa);
+                if(hideAnswers)
+                    findViewById(R.id.checkButton).setVisibility(View.INVISIBLE);
+                AnswerAdapter answerArrayAdapter = new AnswerAdapter(this,R.layout.answer_item,qst.getAnswers(),hideAnswers);
                 list.setAdapter(answerArrayAdapter);
             }
         }
@@ -57,15 +62,13 @@ public class MainTestPage extends AppCompatActivity  {
     public void onCheckClick(View view){
         try {
             ListView list = findViewById(R.id.Answers);
-            int falses = 0;
             for (Integer i = 0; i< list.getCount(); i++ ) {
                 QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
                 Integer id = a.Id;
                 Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(id).getRight());
-                if(!answer)
-                    falses++;
-                setAnswer(a,answer);
+                a.setAnswered(answer ? ra : fa);
             }
+            findViewById(R.id.checkButton).setEnabled(false);
             ((AnswerAdapter)list.getAdapter()).notifyDataSetChanged();
         }
         catch (Exception e){
@@ -75,40 +78,50 @@ public class MainTestPage extends AppCompatActivity  {
 
     public void onNextClick(View view){
         try{
-            if(view.getId()==R.id.backButton) --currentQuestion;
+            if(view.getId()==R.id.backButton) {
+                --currentQuestion;
+                findViewById(R.id.checkButton).setEnabled(false);
+            }
             else
             {
-                ListView list = findViewById(R.id.Answers);
-                int falses = 0;
-                for (Integer i = 0; i< list.getCount(); i++ ) {
-                    QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
-                    Integer id = a.Id;
-                    Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(id).getRight());
-                    if(!answer)
-                        falses++;
-                    setAnswer(a,answer);
-                }
-                questions.get(currentQuestion).setRigthAnswer(falses== 0);
+               if(!questions.get(currentQuestion).getAnswered()){
+                   ListView list = findViewById(R.id.Answers);
+                   int falses = 0;
+                   for (Integer i = 0; i< list.getCount(); i++ ) {
+                       QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
+                       Integer id = a.Id;
+                       Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(id).getRight());
+                       if(!answer)
+                           falses++;
+                       a.setAnswered(answer ? ra : fa);
+                       questions.get(currentQuestion).setAnswered(true);
+                   }
+                   questions.get(currentQuestion).setRightAnswer(falses== 0);
+                   Integer answers = questions.get(currentQuestion).getAnswers().size();
+                   if(!hideAnswers)
+                        Snackbar.make(view, String.format(getResources().getString(R.string.question_result),answers-falses,answers), Snackbar.LENGTH_SHORT).show();
+               }
                 ++currentQuestion;
-            }
-            if(currentQuestion >= questions.size() || currentQuestion<0){
-                Intent testPage = new Intent(this,TestPage.class);
-                testPage.putExtra("QuizFile",quiz);
-                testPage.putExtra("TestNumber",questions.size());
-                int fan = 0;
-                for (QuizFile.Question q :
-                        questions) {
-                    if(!q.getRigthAnswer())
-                        ++fan;
+                if(currentQuestion >= questions.size() || currentQuestion<0){
+                    Intent testPage = new Intent(this,TestPage.class);
+                    testPage.putExtra("QuizFile",quiz);
+                    testPage.putExtra("TestNumber",questions.size());
+                    int fan = 0;
+                    for (QuizFile.Question q :
+                            questions) {
+                        if(!q.getRightAnswer())
+                            ++fan;
+                    }
+                    testPage.putExtra("FalseAnswers",fan);
+                    startActivity(testPage);
+                    return;
                 }
-                testPage.putExtra("FalseAnswers",fan);
-                startActivity(testPage);
-                return;
+                findViewById(R.id.checkButton).setEnabled(!questions.get(currentQuestion).getAnswered());
             }
             QuizFile.Question qst = questions.get(currentQuestion);
             ((TextView)findViewById(R.id.Question)).setText((currentQuestion+1)+"/"+questions.size()+" "+qst.getQuestionName());
             list = findViewById(R.id.Answers);
-            AnswerAdapter answerArrayAdapter = new AnswerAdapter(this,R.layout.answer_item,qst.getAnswers(), ra, fa);
+            AnswerAdapter answerArrayAdapter = new AnswerAdapter(this,R.layout.answer_item,qst.getAnswers(), hideAnswers);
             list.setAdapter(answerArrayAdapter);
             findViewById(R.id.end_button).setVisibility(currentQuestion+1==questions.size() ? View.VISIBLE : View.INVISIBLE);
             findViewById(R.id.nextButton).setVisibility(currentQuestion+1!= questions.size() ? View.VISIBLE : View.INVISIBLE);
@@ -119,8 +132,13 @@ public class MainTestPage extends AppCompatActivity  {
         }
     }
 
-    public void setAnswer(QuizFile.Answer a, Boolean answer){
-        if(a!= null)
-            a.setAnswered(answer ? ra : fa);
+    public static boolean isNumeric(String str)
+    {
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
+    public static List<QuizFile.Question> RandomList(List<QuizFile.Question> questions){
+        Collections.shuffle(questions);
+        return questions;
     }
 }

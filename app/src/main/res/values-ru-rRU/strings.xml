@@ -6,5 +6,11 @@
     <string name="complete_the_selected_number_of_tests">Пройти выбранное количество тестов</string>
     <string name="welcome_text">Это приложение \"Test Assistant\" - приложение для работы с файлами .qst, создаваемыми в приложении \"Ассистент\"</string>
     <string name="end_testing">Закончить тест</string>
-    <string name="test_result" translatable="false">Результаты тестирования -\n%1$d правильных ответов из %2$d</string>
+    <string name="test_result">Результаты тестирования -\n%1$d правильных ответов из %2$d</string>
+    <string name="question_result">%1$d правильных ответов из %2$d</string>
+    <string name="settings">Настройки</string>
+    <string name="pref_header_general">Общие настройки</string>
+    <string name="blind_mode">Слепой режим</string>
+    <string name="blind_description">Не показывать правильные ответы</string>
+    <string name="order_of_question">Случайный порядок вопросов</string>
 </resources>

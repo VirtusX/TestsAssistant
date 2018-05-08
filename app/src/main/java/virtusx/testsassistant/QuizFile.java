@@ -68,8 +68,8 @@ public class QuizFile implements Serializable {
         private String QuestionName;
         private List<Answer> Answers;
         Integer Id;
-        private Boolean Answered = false;
-        private Boolean RigthAnswer = false;
+        private transient Boolean Answered = false;
+        private transient Boolean RightAnswer = false;
 
         Question(){
             Answers = new ArrayList<>();
@@ -92,27 +92,27 @@ public class QuizFile implements Serializable {
         }
 
         public Boolean getAnswered() {
-            return Answered;
+            return Answered !=null ? Answered : false;
         }
 
         public void setAnswered(Boolean answered) {
             Answered = answered;
         }
 
-        public Boolean getRigthAnswer() {
-            return RigthAnswer;
+        public Boolean getRightAnswer() {
+            return RightAnswer != null ? RightAnswer : false;
         }
 
-        public void setRigthAnswer(Boolean rigthAnswer) {
-            RigthAnswer = rigthAnswer;
+        public void setRightAnswer(Boolean rightAnswer) {
+            RightAnswer = rightAnswer;
         }
     }
 
     public class Answer implements Serializable{
         private String AnswerText;
         private Boolean isRight;
-        private Boolean Checked = false;
-        private ColorStateList Answered;
+        private transient Boolean Checked = false;
+        private transient ColorStateList Answered;
         public Integer Id;
 
         Answer(int Id, String text, boolean isRight) {
@@ -138,7 +138,7 @@ public class QuizFile implements Serializable {
         }
 
         public Boolean getChecked() {
-            return Checked;
+            return Checked != null ? Checked : false;
         }
 
         public void setChecked(Boolean checked) {
@@ -155,20 +155,17 @@ public class QuizFile implements Serializable {
     }
 
 }
-class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> {
+class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> implements Serializable{
     private LayoutInflater inflater;
     private int layout;
     private List<QuizFile.Answer> answers;
-    private ColorStateList RightAnswer;
-    private ColorStateList FalseAnswer;
-
-    AnswerAdapter(Context context, int resource, List<QuizFile.Answer> answers, ColorStateList rightAnswer, ColorStateList falseAnswer) {
+    private boolean hideAnswer;
+    AnswerAdapter(Context context, int resource, List<QuizFile.Answer> answers, Boolean hideAnswers) {
         super(context, resource, answers);
         this.answers = answers;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
-        RightAnswer = rightAnswer;
-        FalseAnswer = falseAnswer;
+        hideAnswer = hideAnswers;
     }
 
     @Override
@@ -192,13 +189,10 @@ class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> {
         view = inflater.inflate(this.layout, parent, false);
         CheckBox checkBox = view.findViewById(R.id.answer);
         QuizFile.Answer answer = answers.get(position);
-        checkBox.setOnClickListener(view1 -> {
-            answers.get(position).setChecked(((CheckBox) view1).isChecked());
-            answers.get(position).setAnswered(answer.getRight().equals(((CheckBox)view1).isChecked())? RightAnswer : FalseAnswer);
-            this.notifyDataSetChanged();
-        });
+        checkBox.setOnClickListener(view1 -> answers.get(position).setChecked(((CheckBox) view1).isChecked()));
         if(answer.getAnswered()!= null){
-            checkBox.setButtonTintList(answer.getAnswered());
+            if(!hideAnswer) checkBox.setButtonTintList(answer.getAnswered());
+            checkBox.setEnabled(false);
         }
         checkBox.setChecked(answer.getChecked());
         checkBox.setText(answer.getAnswerText());

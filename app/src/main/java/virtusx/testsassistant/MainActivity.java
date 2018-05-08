@@ -2,34 +2,23 @@ package virtusx.testsassistant;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int READ_REQUEST_CODE = 42;
-    private QuizFile quiz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +63,10 @@ public class MainActivity extends AppCompatActivity {
             List<String> files = new ArrayList<>();
             if (data != null) {
                 try {
-                    if(data.getData()!= null){
-                        file = readTextFromUri(data.getData());
-                    }
+                    if(data.getData()!= null) file = readTextFromUri(data.getData());
                     else if(data.getClipData()!= null) {
-                        for (int i = 0; i<data.getClipData().getItemCount();i++){
+                        for (int i = 0; i<data.getClipData().getItemCount();i++)
                             files.add(readTextFromUri(data.getClipData().getItemAt(i).getUri()));
-                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -89,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             if(file!= null || files.size()>0)
             {
                 try{
-                    quiz = file!= null ? new QuizFile(file) : new QuizFile(files);
+                    QuizFile quiz = file!= null ? new QuizFile(file) : new QuizFile(files);
                     Intent testPage = new Intent(this,TestPage.class);
                     testPage.putExtra("QuizFile",quiz);
                     startActivity(testPage);
@@ -97,11 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 catch (Exception e){
                     Toast.makeText(this.getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
                 }
-
             }
         }
-
     }
+
     private String readTextFromUri(Uri uri) throws IOException {
         InputStream inputStream = getContentResolver().openInputStream(uri);
         BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream),"Windows-1251"));

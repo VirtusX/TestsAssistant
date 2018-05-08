@@ -7,4 +7,10 @@
     <string name="welcome_text">Цей додаток \"Test Assistant\" - додаток для роботи з файлами .qst, зробленими в програмі \"Ассистент\"</string>
     <string name="end_testing">Закінчити тест</string>
     <string name="test_result">Результати тестування -\n%1$d правильних відповідей з %2$d</string>
+    <string name="question_result">%1$d правильних відповідей з %2$d</string>
+    <string name="settings">Налаштування</string>
+    <string name="pref_header_general">Загальні налаштування</string>
+    <string name="blind_mode">Сліпий режим</string>
+    <string name="blind_description">Не показувати правильні відповіді</string>
+    <string name="order_of_question">Випадковий порядок питань</string>
 </resources>
