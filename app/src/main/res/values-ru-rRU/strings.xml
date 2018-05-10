@@ -13,4 +13,5 @@
     <string name="blind_mode">Слепой режим</string>
     <string name="blind_description">Не показывать правильные ответы</string>
     <string name="order_of_question">Случайный порядок вопросов</string>
+    <string name="random_answers">Случайный порядок ответов</string>
 </resources>

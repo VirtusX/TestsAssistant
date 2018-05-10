@@ -15,4 +15,6 @@
     <string name="blind_mode">Blind Mode</string>
     <string name="blind_description">Doesn\'t show corrent answers</string>
     <string name="order_of_question">Random order of questions</string>
+    <string name="random_answers">Random order of answers</string>
+    <string name="question_text" translatable="false">%1$d/%2$d %3$s</string>
 </resources>

@@ -1,5 +1,6 @@
 package virtusx.testsassistant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
@@ -183,6 +184,7 @@ class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> implements Serializabl
         return position;
     }
 
+    @SuppressLint("ViewHolder")
     @NonNull
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view;
@@ -200,67 +202,3 @@ class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> implements Serializabl
         return view;
     }
 }
-
-/*class QuizAdapter extends ArrayAdapter<QuizFile>{
-    private LayoutInflater inflater;
-    private int layout;
-    private List<QuizFile> quizFiles;
-
-    QuizAdapter(Context context, int resource, List<QuizFile> quizFiles) {
-        super(context, resource, quizFiles);
-        this.quizFiles = quizFiles;
-        this.layout = resource;
-        this.inflater = LayoutInflater.from(context);
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @NonNull
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View view;
-        view = inflater.inflate(this.layout, parent, false);
-        try {
-            TextView textView = view.findViewById(R.id.FileName);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view1) {
-                    try {
-                        String file = readTextFromUri(Environment.getExternalStorageDirectory().getPath()+quizFiles.get(position).getPath(),view.getContext());
-                        QuizFile quiz = new QuizFile(file);
-                        Intent testPage = new Intent(view.getContext(),TestPage.class);
-                        testPage.putExtra("QuizFile",quiz);
-                        view.getContext().startActivity(testPage);
-                    } catch (IOException e) {
-                        Toast.makeText(view.getContext(),e.toString(),Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            QuizFile quizFile = quizFiles.get(position);
-            textView.setText(quizFile.getFileName());
-        }
-        catch (Exception e){
-            e.toString();
-        }
-        return view;
-    }
-    private String readTextFromUri(String uri, Context cont) throws IOException {
-        InputStream inputStream = new FileInputStream( uri);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream),"Windows-1251"));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if(!line.trim().equals(""))
-                stringBuilder.append(line).append("\r\n");
-        }
-        inputStream.close();
-        return stringBuilder.toString();
-    }
-}*/

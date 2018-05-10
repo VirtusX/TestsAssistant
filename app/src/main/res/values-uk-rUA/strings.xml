@@ -13,4 +13,5 @@
     <string name="blind_mode">Сліпий режим</string>
     <string name="blind_description">Не показувати правильні відповіді</string>
     <string name="order_of_question">Випадковий порядок питань</string>
+    <string name="random_answers">Випадковий порядок відповідей</string>
 </resources>

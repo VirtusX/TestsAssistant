@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,9 +46,11 @@ public class MainTestPage extends AppCompatActivity  {
                 else if(prefs.getBoolean("random_order",false))
                     questions = RandomList(qsts);
                 else  questions = qsts;
+                if(prefs.getBoolean("random_answers",false)) for (QuizFile.Question q : questions) Collections.shuffle(q.getAnswers());
                 currentQuestion = 0;
                 QuizFile.Question qst = questions.get(currentQuestion);
-                ((TextView)findViewById(R.id.Question)).setText((currentQuestion+1)+"/"+questions.size()+" "+qst.getQuestionName());
+                ((TextView)findViewById(R.id.Question)).setMovementMethod(new ScrollingMovementMethod());
+                ((TextView)findViewById(R.id.Question)).setText(String.format(getResources().getString(R.string.question_text),(currentQuestion+1),questions.size(),qst.getQuestionName()));
                 list = findViewById(R.id.Answers);
                 if(hideAnswers)
                     findViewById(R.id.checkButton).setVisibility(View.INVISIBLE);
@@ -64,8 +67,7 @@ public class MainTestPage extends AppCompatActivity  {
             ListView list = findViewById(R.id.Answers);
             for (Integer i = 0; i< list.getCount(); i++ ) {
                 QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
-                Integer id = a.Id;
-                Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(id).getRight());
+                Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(i).getRight());
                 a.setAnswered(answer ? ra : fa);
             }
             findViewById(R.id.checkButton).setEnabled(false);
@@ -89,8 +91,7 @@ public class MainTestPage extends AppCompatActivity  {
                    int falses = 0;
                    for (Integer i = 0; i< list.getCount(); i++ ) {
                        QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
-                       Integer id = a.Id;
-                       Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(id).getRight());
+                       Boolean answer = a.getChecked().equals(questions.get(currentQuestion).getAnswer(i).getRight());
                        if(!answer)
                            falses++;
                        a.setAnswered(answer ? ra : fa);
@@ -119,7 +120,8 @@ public class MainTestPage extends AppCompatActivity  {
                 findViewById(R.id.checkButton).setEnabled(!questions.get(currentQuestion).getAnswered());
             }
             QuizFile.Question qst = questions.get(currentQuestion);
-            ((TextView)findViewById(R.id.Question)).setText((currentQuestion+1)+"/"+questions.size()+" "+qst.getQuestionName());
+            findViewById(R.id.Question).scrollTo(0,0);
+            ((TextView)findViewById(R.id.Question)).setText(String.format(getResources().getString(R.string.question_text),(currentQuestion+1),questions.size(),qst.getQuestionName()));
             list = findViewById(R.id.Answers);
             AnswerAdapter answerArrayAdapter = new AnswerAdapter(this,R.layout.answer_item,qst.getAnswers(), hideAnswers);
             list.setAdapter(answerArrayAdapter);

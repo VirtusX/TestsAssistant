@@ -10,4 +10,8 @@
         android:defaultValue="false"
         android:key="random_order"
         android:title="@string/order_of_question" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="random_answers"
+        android:title="@string/random_answers" />
 </PreferenceScreen>
