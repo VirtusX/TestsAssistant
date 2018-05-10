@@ -70,6 +70,9 @@ public class Settings extends AppCompatPreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode",false)){
+            setTheme(android.R.style.Theme_Material_NoActionBar);
+        }
         super.onCreate(savedInstanceState);
         setupActionBar();
     }

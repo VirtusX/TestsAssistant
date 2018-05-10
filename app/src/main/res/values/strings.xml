@@ -6,7 +6,7 @@
     <string name="Load_Test">Load tests</string>
     <string name="All_Tests">Complete all tests</string>
     <string name="complete_the_selected_number_of_tests">Complete the selected number of tests</string>
-    <string name="welcome_text">This is \"Tests Assistant\" app - app, that worked with .qst file format from program Assistant</string>
+    <string name="welcome_text">This is \"Tests Assistant\" - an application for passing tests that were made in the  \"Assistant\" program</string>
     <string name="end_testing">Finish the test</string>
     <string name="test_result">Test results -\n%1$d right answers out of %2$d</string>
     <string name="question_result">%1$d right answers out of %2$d</string>
@@ -17,4 +17,6 @@
     <string name="order_of_question">Random order of questions</string>
     <string name="random_answers">Random order of answers</string>
     <string name="question_text" translatable="false">%1$d/%2$d %3$s</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="reload">Reload app for apply</string>
 </resources>

@@ -4,7 +4,7 @@
     <string name="Check_Answer">Проверить</string>
     <string name="All_Tests">Пройти все тесты</string>
     <string name="complete_the_selected_number_of_tests">Пройти выбранное количество тестов</string>
-    <string name="welcome_text">Это приложение \"Test Assistant\" - приложение для работы с файлами .qst, создаваемыми в приложении \"Ассистент\"</string>
+    <string name="welcome_text">Это «Tests Assistant» - приложение для прохождения тестов, которые были сделаны в программе «Ассистент»</string>
     <string name="end_testing">Закончить тест</string>
     <string name="test_result">Результаты тестирования -\n%1$d правильных ответов из %2$d</string>
     <string name="question_result">%1$d правильных ответов из %2$d</string>
@@ -14,4 +14,6 @@
     <string name="blind_description">Не показывать правильные ответы</string>
     <string name="order_of_question">Случайный порядок вопросов</string>
     <string name="random_answers">Случайный порядок ответов</string>
+    <string name="dark_mode">Темный режим</string>
+    <string name="reload">Перезагрузите приложение, чтобы применить тему</string>
 </resources>

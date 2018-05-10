@@ -32,6 +32,9 @@ public class MainTestPage extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
+            if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode",false)){
+                setTheme(android.R.style.Theme_Material_NoActionBar);
+            }
             setContentView(R.layout.activity_main_test_page);
             ra  =  ColorStateList.valueOf(getResources().getColor(R.color.colorRight));
             fa  =  ColorStateList.valueOf(getResources().getColor(R.color.colorError));

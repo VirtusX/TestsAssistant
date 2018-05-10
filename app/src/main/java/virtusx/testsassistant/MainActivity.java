@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -22,32 +23,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode",false)){
+            setTheme(android.R.style.Theme_Material_NoActionBar);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       /*try{
-           SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-           db.execSQL("CREATE TABLE IF NOT EXISTS Files (FilePath TEXT, FileName TEXT)");
-           Cursor query = db.rawQuery("SELECT * FROM Files;", null);
-           List<QuizFile> quizFiles = new ArrayList<>();
-           if(query.moveToFirst()){
-               do {
-                   String file = query.getString(0);
-                   String name = query.getString(1);
-                   quizFiles.add(new QuizFile(file,name));
-               }
-               while (query.moveToNext());
-           }
-           if(quizFiles.size()>0){
-               ListView list = findViewById(R.id.FilesList);
-               QuizAdapter quizAdapter = new QuizAdapter(this,R.layout.file_item,quizFiles);
-               list.setAdapter(quizAdapter);
-           }
-           query.close();
-           db.close();
-       }
-       catch (Exception e){
-           Toast.makeText(this.getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
-       }*/
     }
     public void LoadTest(View view) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

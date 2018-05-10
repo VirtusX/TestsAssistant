@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,9 @@ public class TestPage extends AppCompatActivity {
     private QuizFile quiz;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode",false)){
+            setTheme(android.R.style.Theme_Material_NoActionBar);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_page);
         quiz = (QuizFile) Objects.requireNonNull(getIntent().getExtras()).get("QuizFile");
@@ -36,6 +40,7 @@ public class TestPage extends AppCompatActivity {
         ((TextView)findViewById(R.id.TestName)).setText(quiz.getName());
         ((EditText)findViewById(R.id.selectQuestion)).setHint("1 - "+quiz.getQuestions().size());
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
