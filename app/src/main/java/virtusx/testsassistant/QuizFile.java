@@ -45,10 +45,11 @@ public class QuizFile implements Serializable {
             quest.Id = i;
             quest.QuestionName = answrs.get(0).replace("\r\n","").trim();
             answrs.remove(0);
-            for (int j = 0; j < answrs.size(); j++) {
-                if(!answrs.get(j).replace("\r\n","").trim().equals(""))
-                    quest.Answers.add(new Answer(j,answrs.get(j).replace("\r\n","").substring(1).trim(),answrs.get(j).contains("+")));
-            }
+            for (int j = 0; j < answrs.size(); j++)
+                if (!answrs.get(j).replace("\r\n", "").trim().equals(""))
+                    quest.Answers.add(new Answer(j,
+                            answrs.get(j).substring(1).trim().replace("\r\n", "").trim(),
+                            answrs.get(j).charAt(0) == '+'));
             Questions.add(quest);
         }
     }
