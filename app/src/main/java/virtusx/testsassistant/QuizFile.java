@@ -10,18 +10,67 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class QuizFile implements Serializable {
+    private static QuizFile current;
+
+    static void setCurrent(QuizFile quizFile) {
+        current = quizFile;
+    }
+
+    static QuizFile getInstance(File directory) {
+        if (current == null)
+            current = LoadQuizFile(directory);
+        return current;
+    }
+
+    private List<Question> currentQuestions;
+
+    List<Question> getCurrentQuestions() {
+        return currentQuestions;
+    }
+
+    void setCurrentQuestions(List<Question> questions) {
+        currentQuestions = questions;
+    }
+
+    private int currentQuestion;
+
+    int getCurrentQuestion() {
+        return currentQuestion;
+    }
+
+    void setCurrentQuestion(int q) {
+        currentQuestion = q;
+    }
+
+    private List<Answer> currentAnswers;
+
+    List<Answer> getAnswersByQuestId(int id) {
+        List<Answer> res = new ArrayList<>();
+        for (Answer a : currentAnswers)
+            if (a.QuestId == id)
+                res.add(a);
+        return res;
+    }
     private String Name;
     private List<Question> Questions;
     private Integer Id;
 
     QuizFile(String file) {
         Questions = new ArrayList<>();
+        currentAnswers = new ArrayList<>();
         setQuestions(file);
     }
     QuizFile(List<String> files) {
@@ -29,6 +78,17 @@ public class QuizFile implements Serializable {
         for (String file : files) setQuestions(file);
     }
 
+    static void initInstance() {
+    }
+
+    List<Question> resetQuestions() {
+        for (Question q : getQuestions()) q.setAnswered(false);
+        for (Answer a : currentAnswers) {
+            a.setChecked(false);
+            a.setAnswered(null);
+        }
+        return getQuestions();
+    }
     private void setQuestions(String file) {
         String[] split = file.split("\r\n\\?");
         ArrayList<String> list = new ArrayList<>( Arrays.asList(split));
@@ -47,8 +107,7 @@ public class QuizFile implements Serializable {
             answrs.remove(0);
             for (int j = 0; j < answrs.size(); j++)
                 if (!answrs.get(j).replace("\r\n", "").trim().equals(""))
-                    quest.Answers.add(new Answer(j,
-                            answrs.get(j).substring(1).trim().replace("\r\n", "").trim(),
+                    currentAnswers.add(new Answer(j, i, answrs.get(j).substring(1).trim().replace("\r\n", "").trim(),
                             answrs.get(j).charAt(0) == '+'));
             Questions.add(quest);
         }
@@ -58,7 +117,7 @@ public class QuizFile implements Serializable {
         return Name;
     }
 
-    public List<Question> getQuestions() {
+    List<Question> getQuestions() {
         return Questions;
     }
 
@@ -66,64 +125,49 @@ public class QuizFile implements Serializable {
 
     public void setId(Integer id) { Id = id;}
 
-    public class Question implements Serializable{
+    class Question implements Serializable {
         private String QuestionName;
-        private List<Answer> Answers;
         Integer Id;
-        private transient Boolean Answered = false;
-        private transient Boolean RightAnswer = false;
+        private Boolean Answered = false;
+        private Boolean RightAnswer = false;
 
-        Question(){
-            Answers = new ArrayList<>();
-        }
-
-        public List<Answer> getAnswers() {
-            return Answers;
-        }
-
-        public void setAnswers(List<Answer> answers) {
-            Answers = answers;
-        }
-
-        public String getQuestionName() {
+        String getQuestionName() {
             return QuestionName;
         }
 
-        public Answer getAnswer(Integer id){
-            return Answers.get(id);
-        }
-
-        public Boolean getAnswered() {
+        Boolean getAnswered() {
             return Answered !=null ? Answered : false;
         }
 
-        public void setAnswered(Boolean answered) {
+        void setAnswered(Boolean answered) {
             Answered = answered;
         }
 
-        public Boolean getRightAnswer() {
+        Boolean getRightAnswer() {
             return RightAnswer != null ? RightAnswer : false;
         }
 
-        public void setRightAnswer(Boolean rightAnswer) {
+        void setRightAnswer(Boolean rightAnswer) {
             RightAnswer = rightAnswer;
         }
     }
 
-    public class Answer implements Serializable{
+    class Answer implements Serializable {
         private String AnswerText;
         private Boolean isRight;
-        private transient Boolean Checked = false;
-        private transient ColorStateList Answered;
-        public Integer Id;
+        private Boolean Checked = false;
+        private Boolean Answered;
+        Integer Id;
+        Integer QuestId;
 
-        Answer(int Id, String text, boolean isRight) {
+        Answer(int Id, int questId, String text, boolean isRight) {
             this.Id = Id;
+            this.QuestId = questId;
             setAnswerText(text);
             setRight(isRight);
         }
 
-        public String getAnswerText() {
+        String getAnswerText() {
             return AnswerText;
         }
 
@@ -131,43 +175,82 @@ public class QuizFile implements Serializable {
             AnswerText = answerText;
         }
 
-        public Boolean getRight() {
+        Boolean getRight() {
             return isRight;
         }
 
-        public void setRight(Boolean right) {
+        void setRight(Boolean right) {
             isRight = right;
         }
 
-        public Boolean getChecked() {
+        Boolean getChecked() {
             return Checked != null ? Checked : false;
         }
 
-        public void setChecked(Boolean checked) {
+        void setChecked(Boolean checked) {
             Checked = checked;
         }
 
-        public ColorStateList getAnswered() {
+        Boolean getAnswered() {
             return Answered;
         }
 
-        public void setAnswered(ColorStateList answered) {
+        void setAnswered(Boolean answered) {
             Answered = answered;
         }
     }
 
+    static void SaveQuizFile(QuizFile quiz, File directory) {
+        ObjectOutput out;
+        try {
+            File outFile = new File(directory, "appSaveQuiz.data");
+            out = new ObjectOutputStream(new FileOutputStream(outFile));
+            out.writeObject(quiz);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static QuizFile LoadQuizFile(File directory) {
+        ObjectInput in;
+        QuizFile res = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(directory.getPath() + File.separator + "appSaveQuiz.data");
+            in = new ObjectInputStream(fileIn);
+            res = (QuizFile) in.readObject();
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    static int HasPreviousQuiz(File directory) {
+        try {
+            File file = new File(directory.getPath() + File.separator + "appSaveQuiz.data");
+            return file.exists() ? 0 : 4;
+        } catch (Exception e) {
+            return 4;
+        }
+    }
 }
 class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> implements Serializable{
     private LayoutInflater inflater;
     private int layout;
     private List<QuizFile.Answer> answers;
     private boolean hideAnswer;
-    AnswerAdapter(Context context, int resource, List<QuizFile.Answer> answers, Boolean hideAnswers) {
+    private ColorStateList falseColor;
+    private ColorStateList rightColor;
+
+    AnswerAdapter(Context context, int resource, List<QuizFile.Answer> answers, Boolean hideAnswers, ColorStateList fa, ColorStateList ra) {
         super(context, resource, answers);
         this.answers = answers;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
         hideAnswer = hideAnswers;
+        falseColor = fa;
+        rightColor = ra;
     }
 
     @Override
@@ -194,7 +277,8 @@ class AnswerAdapter extends ArrayAdapter<QuizFile.Answer> implements Serializabl
         QuizFile.Answer answer = answers.get(position);
         checkBox.setOnClickListener(view1 -> answers.get(position).setChecked(((CheckBox) view1).isChecked()));
         if(answer.getAnswered()!= null){
-            if(!hideAnswer) checkBox.setButtonTintList(answer.getAnswered());
+            if (!hideAnswer)
+                checkBox.setButtonTintList(answer.getAnswered() ? rightColor : falseColor);
             checkBox.setEnabled(false);
         }
         checkBox.setChecked(answer.getChecked());

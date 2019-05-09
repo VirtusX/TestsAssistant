@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:focusable="auto"
     android:focusableInTouchMode="true"
-    tools:context=".TestPage">
+    tools:context=".MainPage">
 
     <TextView
         android:id="@+id/TestName"
@@ -74,5 +74,18 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/LoadPrevious"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="continueTest"
+        android:text="@string/loadPrevious"
+        app:layout_constraintBottom_toTopOf="@+id/testResult"
+        app:layout_constraintEnd_toEndOf="@+id/testResult"
+        app:layout_constraintStart_toStartOf="@+id/testResult"
+        app:layout_constraintTop_toBottomOf="@+id/StartTest" />
 
 </android.support.constraint.ConstraintLayout>

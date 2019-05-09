@@ -23,11 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode",false)){
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false))
             setTheme(android.R.style.Theme_Material_NoActionBar);
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.Previous).setVisibility(QuizFile.HasPreviousQuiz(this.getExternalFilesDir(null)));
+        QuizFile.initInstance();
     }
     public void LoadTest(View view) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -36,29 +37,38 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent,READ_REQUEST_CODE);
     }
 
+    public void PreviousTest(View view) {
+        try {
+            Intent testPage = new Intent(this, MainPage.class);
+            QuizFile.setCurrent(QuizFile.LoadQuizFile(this.getExternalFilesDir(null)));
+            startActivity(testPage);
+        } catch (Exception e) {
+            Toast.makeText(this.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String file = null;
             List<String> files = new ArrayList<>();
-            if (data != null) {
-                try {
-                    if(data.getData()!= null) file = readTextFromUri(data.getData());
-                    else if(data.getClipData()!= null) {
-                        for (int i = 0; i<data.getClipData().getItemCount();i++)
-                            files.add(readTextFromUri(data.getClipData().getItemAt(i).getUri()));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (data != null) try {
+                if (data.getData() != null) file = readTextFromUri(data.getData());
+                else if (data.getClipData() != null) {
+                    for (int i = 0; i < data.getClipData().getItemCount(); i++)
+                        files.add(readTextFromUri(data.getClipData().getItemAt(i).getUri()));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             if(file!= null || files.size()>0)
             {
                 try{
-                    QuizFile quiz = file!= null ? new QuizFile(file) : new QuizFile(files);
-                    Intent testPage = new Intent(this,TestPage.class);
-                    testPage.putExtra("QuizFile",quiz);
-                    startActivity(testPage);
+                    QuizFile.setCurrent(file != null ? new QuizFile(file) : new QuizFile(files));
+                    Intent mainPage = new Intent(this, MainPage.class);
+                    QuizFile.SaveQuizFile(QuizFile.getInstance(this.getExternalFilesDir(null)), this.getExternalFilesDir(null));
+                    startActivity(mainPage);
                 }
                 catch (Exception e){
                     Toast.makeText(this.getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();

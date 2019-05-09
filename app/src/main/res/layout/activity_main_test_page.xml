@@ -12,17 +12,16 @@
         android:id="@+id/Answers"
         android:layout_width="352dp"
         android:layout_height="389dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:fadeScrollbars="false"
-        app:layout_constraintBottom_toTopOf="@+id/checkButton"
+        app:layout_constraintBottom_toTopOf="@+id/nextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Question"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/Question" />
 
     <TextView
         android:id="@+id/Question"
@@ -42,55 +41,66 @@
 
     <Button
         android:id="@+id/checkButton"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="onCheckClick"
-        android:text="@string/Check_Answer"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"
+        android:drawableBottom="@drawable/ic_check_circle_black_24dp"
+        android:onClick="checkAnswer"
+        android:paddingBottom="12dp"
         android:textSize="12sp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.018"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/end_button"
+        app:layout_constraintHorizontal_bias="0.388"
+        app:layout_constraintStart_toEndOf="@+id/exit" />
 
     <Button
         android:id="@+id/nextButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="10dp"
         android:drawableBottom="@android:drawable/ic_media_next"
         android:onClick="onNextClick"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.982"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginBottom="10dp"
         android:drawableBottom="@android:drawable/ic_media_previous"
         android:onClick="onNextClick"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/nextButton"
-        app:layout_constraintStart_toEndOf="@+id/end_button" />
+        app:layout_constraintEnd_toStartOf="@+id/nextButton" />
 
     <Button
         android:id="@+id/end_button"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="10dp"
+        android:drawableBottom="@drawable/ic_exit_to_app_black_24dp"
         android:onClick="onNextClick"
-        android:text="@string/end_testing"
-        android:visibility="invisible"
+        android:paddingBottom="12dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintEnd_toStartOf="@+id/backButton" />
+
+    <Button
+        android:id="@+id/exit"
+        android:layout_width="46dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="10dp"
+        android:drawableBottom="@android:drawable/ic_menu_save"
+        android:onClick="save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

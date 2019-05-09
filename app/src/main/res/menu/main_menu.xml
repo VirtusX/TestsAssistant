@@ -10,4 +10,9 @@
         android:icon="@android:drawable/ic_menu_upload"
         android:orderInCategory="2"
         android:title="@string/Load_Test" />
+    <item
+        android:id="@+id/exit"
+        android:icon="@android:drawable/btn_dialog"
+        android:orderInCategory="3"
+        android:title="@string/exit" />
 </menu>

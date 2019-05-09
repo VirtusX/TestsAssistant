@@ -5,7 +5,7 @@
     <string name="All_Tests">Пройти усі тести</string>
     <string name="complete_the_selected_number_of_tests">Пройти вибрану кількість тестів</string>
     <string name="welcome_text">Це «Tests Assistant» - додаток для проходження тестів, які були зроблені в програмі «Асистент»</string>
-    <string name="end_testing">Закінчити тест</string>
+    <string name="end_testing">Закінчити</string>
     <string name="test_result">Результати тестування -\n%1$d правильних відповідей з %2$d</string>
     <string name="question_result">%1$d правильних відповідей з %2$d</string>
     <string name="settings">Налаштування</string>
@@ -16,4 +16,10 @@
     <string name="random_answers">Випадковий порядок відповідей</string>
     <string name="dark_mode">Темний режим</string>
     <string name="reload">Перезавантажте програму, щоб застосувати тему</string>
+    <string name="previousLoadButton">Відкрити останній тест</string>
+    <string name="loadPrevious">Продовжити</string>
+    <string name="exit">Вийти</string>
+    <string name="previousTest">Попередній тест</string>
+    <string name="nextTest">Наступний тест</string>
+    <string name="saveTest">Зберегти та вийти</string>
 </resources>
