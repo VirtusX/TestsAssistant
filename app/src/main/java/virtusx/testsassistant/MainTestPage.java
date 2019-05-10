@@ -27,9 +27,8 @@ public class MainTestPage extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_mode", false))
             setTheme(android.R.style.Theme_Material_NoActionBar);
-        }
         setContentView(R.layout.activity_main_test_page);
         StartTest();
     }
@@ -54,7 +53,7 @@ public class MainTestPage extends AppCompatActivity  {
                         QuizFile.getInstance(this.getExternalFilesDir(null)).setCurrentQuestions(qsts);
                     if (prefs.getBoolean("random_answers", false))
                         for (QuizFile.Question q : QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions())
-                            Collections.shuffle(QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(q.Id));
+                            Collections.shuffle(q.getAnswers());
                     QuizFile.getInstance(this.getExternalFilesDir(null)).setCurrentQuestion(0);
                 }
                 QuizFile.Question qst = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion());
@@ -63,7 +62,7 @@ public class MainTestPage extends AppCompatActivity  {
                 list = findViewById(R.id.Answers);
                 if(hideAnswers)
                     findViewById(R.id.checkButton).setVisibility(View.INVISIBLE);
-                AnswerAdapter answerArrayAdapter = new AnswerAdapter(this, R.layout.answer_item, QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(qst.Id), hideAnswers, fa, ra);
+                AnswerAdapter answerArrayAdapter = new AnswerAdapter(this, R.layout.answer_item, qst.getAnswers(), hideAnswers, fa, ra);
                 list.setAdapter(answerArrayAdapter);
                 setButtonsVisibility();
             }
@@ -78,8 +77,8 @@ public class MainTestPage extends AppCompatActivity  {
             ListView list = findViewById(R.id.Answers);
             for (int i = 0; i < list.getCount(); i++) {
                 QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
-                int id = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion()).Id;
-                boolean answer = a.getChecked().equals(QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(id).get(i).getRight());
+                QuizFile.Question q = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion());
+                boolean answer = a.getChecked().equals(q.getAnswers().get(i).getRight());
                 a.setAnswered(answer);
             }
             findViewById(R.id.checkButton).setEnabled(false);
@@ -129,7 +128,7 @@ public class MainTestPage extends AppCompatActivity  {
         findViewById(R.id.Question).scrollTo(0, 0);
         ((TextView) findViewById(R.id.Question)).setText(String.format(getResources().getString(R.string.question_text), (QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion() + 1), QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().size(), qst.getQuestionName()));
         list = findViewById(R.id.Answers);
-        AnswerAdapter answerArrayAdapter = new AnswerAdapter(this, R.layout.answer_item, QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(qst.Id), hideAnswers, fa, ra);
+        AnswerAdapter answerArrayAdapter = new AnswerAdapter(this, R.layout.answer_item, qst.getAnswers(), hideAnswers, fa, ra);
         list.setAdapter(answerArrayAdapter);
         setButtonsVisibility();
     }
@@ -140,16 +139,16 @@ public class MainTestPage extends AppCompatActivity  {
             int falses = 0;
             for (int i = 0; i < list.getCount(); i++) {
                 QuizFile.Answer a = (QuizFile.Answer) list.getAdapter().getItem(i);
-                int id = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion()).Id;
-                boolean answer = a.getChecked().equals(QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(id).get(i).getRight());
+                QuizFile.Question q = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion());
+                boolean answer = a.getChecked().equals(q.getAnswers().get(i).getRight());
                 if (!answer)
                     falses++;
                 a.setAnswered(answer);
                 QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion()).setAnswered(true);
             }
             QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion()).setRightAnswer(falses == 0);
-            int curId = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion()).Id;
-            Integer answers = QuizFile.getInstance(this.getExternalFilesDir(null)).getAnswersByQuestId(curId).size();
+            QuizFile.Question q = QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestions().get(QuizFile.getInstance(this.getExternalFilesDir(null)).getCurrentQuestion());
+            Integer answers = q.getAnswers().size();
             if (!hideAnswers)
                 Snackbar.make(view, String.format(getResources().getString(R.string.question_result), answers - falses, answers), Snackbar.LENGTH_SHORT).show();
         }

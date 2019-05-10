@@ -55,22 +55,12 @@ public class QuizFile implements Serializable {
         currentQuestion = q;
     }
 
-    private List<Answer> currentAnswers;
-
-    List<Answer> getAnswersByQuestId(int id) {
-        List<Answer> res = new ArrayList<>();
-        for (Answer a : currentAnswers)
-            if (a.QuestId == id)
-                res.add(a);
-        return res;
-    }
     private String Name;
     private List<Question> Questions;
     private Integer Id;
 
     QuizFile(String file) {
         Questions = new ArrayList<>();
-        currentAnswers = new ArrayList<>();
         setQuestions(file);
     }
     QuizFile(List<String> files) {
@@ -82,10 +72,12 @@ public class QuizFile implements Serializable {
     }
 
     List<Question> resetQuestions() {
-        for (Question q : getQuestions()) q.setAnswered(false);
-        for (Answer a : currentAnswers) {
-            a.setChecked(false);
-            a.setAnswered(null);
+        for (Question q : getQuestions()) {
+            q.setAnswered(false);
+            for (Answer a : q.getAnswers()) {
+                a.setChecked(false);
+                a.setAnswered(null);
+            }
         }
         return getQuestions();
     }
@@ -107,7 +99,7 @@ public class QuizFile implements Serializable {
             answrs.remove(0);
             for (int j = 0; j < answrs.size(); j++)
                 if (!answrs.get(j).replace("\r\n", "").trim().equals(""))
-                    currentAnswers.add(new Answer(j, i, answrs.get(j).substring(1).trim().replace("\r\n", "").trim(),
+                    quest.Answers.add(new Answer(j, i, answrs.get(j).substring(1).trim().replace("\r\n", "").trim(),
                             answrs.get(j).charAt(0) == '+'));
             Questions.add(quest);
         }
@@ -127,10 +119,24 @@ public class QuizFile implements Serializable {
 
     class Question implements Serializable {
         private String QuestionName;
+        private List<Answer> Answers;
         Integer Id;
         private Boolean Answered = false;
         private Boolean RightAnswer = false;
+        Question(){
+            Answers = new ArrayList<>();
+        }
 
+        List<Answer> getAnswers() {
+            return Answers;
+        }
+
+        void setAnswers(List<Answer> answers) {
+            Answers = answers;
+        }
+        Answer getAnswer(Integer id){
+            return Answers.get(id);
+        }
         String getQuestionName() {
             return QuestionName;
         }
