@@ -91,8 +91,8 @@ public class MainTestPage extends AppCompatActivity  {
 
     @Override
     protected void onStop() {
-        super.onStop();
         save(null);
+        super.onStop();
     }
 
     @Override
@@ -104,6 +104,7 @@ public class MainTestPage extends AppCompatActivity  {
     public void save(View view) {
         try {
             QuizFile.SaveQuizFile(QuizFile.getInstance(this.getExternalFilesDir(null)), this.getExternalFilesDir(null));
+            getIntent().removeExtra("startNew");
             if (view != null) {
                 Intent mainPage = new Intent(this, MainPage.class);
                 startActivity(mainPage);

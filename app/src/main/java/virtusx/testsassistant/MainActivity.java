@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             Intent testPage = new Intent(this, MainPage.class);
             QuizFile.setCurrent(QuizFile.LoadQuizFile(this.getExternalFilesDir(null)));
+            if(QuizFile.getInstance(this.getExternalFilesDir(null)) == null){
+                Toast.makeText(this.getApplicationContext(),"File Error, please load another test",Toast.LENGTH_SHORT).show();
+                findViewById(R.id.Previous).setVisibility(View.INVISIBLE);
+                return;
+            }
             startActivity(testPage);
         } catch (Exception e) {
             Toast.makeText(this.getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
